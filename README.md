@@ -98,8 +98,8 @@ If your repo doesn’t look like this yet, that’s okay—the README still expl
 ### 1) Clone the repository
 
 ```bash
-git clone https://github.com/riya-1408/Flood-Resilience-Network--Zynd.git
-cd Flood-Resilience-Network--Zynd
+git clone https://github.com/riya-1408/AI-Flood-Resilience-Network.git
+cd AI-Flood-Resilience-Network
 ```
 
 ### 2) Create a virtual environment
