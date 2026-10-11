@@ -1,0 +1,16 @@
+# Core Framework
+fastapi
+uvicorn[standard]
+python-dotenv
+
+# ML & Data Science
+torch>=2.0.0
+pandas>=2.0.0
+numpy>=1.26.0
+scikit-learn>=1.4.0
+
+# APIs & Communication
+requests
+websockets
+python-multipart
+pydantic
