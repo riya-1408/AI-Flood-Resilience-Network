@@ -1,328 +1,210 @@
-# Flood-Resilience-Network
+# 🌊 AI Flood Resilience Network v2.0
 
-An interactive, viewer-friendly project focused on exploring, communicating, and strengthening **flood resilience** through a networked approach.
+> **Autonomous Multi-Agent Flood Early Warning, Deep Learning Risk Prediction & Emergency Coordination Platform**
 
-> **Repo languages:** Python (54.3%), HTML (45.7%)
-
----
-
-## Table of Contents
-
-- [Overview](#overview)
-- [What This Project Does](#what-this-project-does)
-- [Key Concepts](#key-concepts)
-- [Project Structure](#project-structure)
-- [Quick Start](#quick-start)
-  - [1) Clone the repository](#1-clone-the-repository)
-  - [2) Create a virtual environment](#2-create-a-virtual-environment)
-  - [3) Install dependencies](#3-install-dependencies)
-  - [4) Run the project](#4-run-the-project)
-- [How to Use](#how-to-use)
-- [Configuration](#configuration)
-- [Data](#data)
-- [Development Guide](#development-guide)
-- [Testing](#testing)
-- [Troubleshooting](#troubleshooting)
-- [Roadmap](#roadmap)
-- [Contributing](#contributing)
-- [Acknowledgements](#acknowledgements)
+[![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.100%2B-009688.svg)](https://fastapi.tiangolo.com/)
+[![PyTorch](https://img.shields.io/badge/PyTorch-2.0%2B-EE4C2C.svg)](https://pytorch.org/)
+[![Leaflet](https://img.shields.io/badge/Leaflet-1.9.4-199900.svg)](https://leafletjs.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ---
 
-## Overview
+## 📌 Overview
 
-Flooding affects communities, infrastructure, and ecosystems. Building resilience requires **good data**, **clear communication**, and **collaboration across systems** (people, places, services, and policies).
+The **AI Flood Resilience Network** is an intelligent disaster preparedness and mitigation platform designed to bridge the gap between predictive hydrological analytics and real-time emergency field mobilization.
 
-This repository combines:
-
-- **Python** for data processing/analysis and (optionally) a lightweight web backend.
-- **HTML** (with optional CSS/JS) for a user-facing, interactive viewer.
-
-The goal is to make flood-resilience information **easy to understand**, **easy to explore**, and **useful for decision-making**.
+Rather than providing a simple binary flood prediction, this platform integrates **5 autonomous AI agents** managed by a central orchestrator. Together, they ingest meteorological, geographical, and topographical parameters, execute deep neural network inference, evaluate confidence bounds, formulate explainable risk factor attributions, broadcast real-time WebSocket alerts, and generate automated disaster response plans (NDRF deployment, high-capacity pump allocation, evacuation routes, and contextual safety guidelines).
 
 ---
 
-## What This Project Does
+## 🏗️ System Architecture
 
-Depending on your dataset and deployment, this project can support:
-
-- Visualizing flood-related information (risk areas, events, resources, networks)
-- Exploring resilience networks (who/what connects to what, and where)
-- Summarizing insights (metrics, hotspots, vulnerabilities, response capacity)
-- Offering an interactive viewer (web page) so non-technical users can explore
-
-> If you want, I can tailor this README to the exact features once we confirm what scripts/pages exist in the repo.
-
----
-
-## Key Concepts
-
-- **Flood Hazard:** likelihood and intensity of flood events.
-- **Exposure:** people/assets located in flood-prone areas.
-- **Vulnerability:** how severely exposed elements are affected.
-- **Resilience:** ability to prepare, respond, recover, and adapt.
-- **Network View:** resilience is strengthened by connections (resources, services, governance, community support).
-
----
-
-## Project Structure
-
-Because repository layouts differ, the structure below is a recommended/typical structure. Update it to match your repo.
-
-```text
-Flood-Resilience-Network/
-├─ README.md
-├─ requirements.txt
-├─ src/
-│  ├─ app.py                 # optional backend (Flask/FastAPI) entry
-│  ├─ analysis/              # notebooks/scripts for data exploration
-│  ├─ processing/            # ETL, cleaning, feature engineering
-│  └─ utils/                 # shared helpers
-├─ web/
-│  ├─ index.html             # interactive viewer entry
-│  ├─ assets/                # images/icons
-│  ├─ styles/                # CSS
-│  └─ scripts/               # JS for interactivity
-├─ data/
-│  ├─ raw/                   # source datasets
-│  └─ processed/             # cleaned/derived outputs
-└─ docs/                     # extra documentation (optional)
+```
+                                  ┌───────────────────────────┐
+                                  │    User / GIS Dashboard   │
+                                  └─────────────┬─────────────┘
+                                                │ REST / WebSockets
+                                                ▼
+                                  ┌───────────────────────────┐
+                                  │     FastAPI Web Server    │
+                                  └─────────────┬─────────────┘
+                                                │
+                                                ▼
+                                  ┌───────────────────────────┐
+                                  │     CoordinationAgent     │
+                                  │    (Master Orchestrator)  │
+                                  └─────────────┬─────────────┘
+                                                │
+         ┌──────────────────────────────┬───────┴──────────────────────┬──────────────────────────────┐
+         ▼                              ▼                              ▼                              ▼
+┌──────────────────┐          ┌──────────────────┐          ┌──────────────────┐          ┌──────────────────┐
+│ MonitoringAgent  │          │ PredictionAgent  │          │    AlertAgent    │          │  ResourceAgent   │
+├──────────────────┤          ├──────────────────┤          ├──────────────────┤          ├──────────────────┤
+│ • Micro-climate  │ ───────► │ • PyTorch MLP    │ ───────► │ • WebSocket Push │          │ • NDRF & Medical │
+│ • Temp / Humidity│          │ • 20 Hydrological│          │ • Live Alert Log │          │ • Safe Routes    │
+│ • Pressure & Wind│          │   Indicators     │          │ • Client Broadcast│         │ • Do's & Don'ts  │
+│ • Real-time feeds│          │ • Confidence & XAI│         │                  │          │ • Helplines      │
+└──────────────────┘          └──────────────────┘          └──────────────────┘          └──────────────────┘
 ```
 
-If your repo doesn’t look like this yet, that’s okay—the README still explains how to run and improve it.
+---
+
+## 🤖 The 5 Autonomous AI Agents
+
+1. **`CoordinationAgent` (Master Orchestrator)**:
+   - Manages the entire lifecycle: `Location Ingestion ➔ Weather Telemetry ➔ Neural Prediction ➔ Decision Gating ➔ Emergency Action Mobilization`.
+   - Ensures decoupled agent communication and reports live system heartbeat status.
+
+2. **`MonitoringAgent` (Meteorological Telemetry)**:
+   - Evaluates micro-climatic conditions for any target coordinates.
+   - Computes realistic atmospheric telemetry including temperature, "feels-like" index, humidity %, barometric pressure (hPa), wind velocity & vector direction, cloud cover, visibility (km), and UV index.
+
+3. **`PredictionAgent` (Deep Learning & Explainable AI)**:
+   - Executes a 20-feature PyTorch Multi-Layer Perceptron (`FloodMLP`) trained on global historical flood benchmarks.
+   - Computes statistical confidence intervals (`score`, `upper_bound`, `lower_bound`, `margin_of_error`).
+   - Conducts **Risk Factor Decomposition** to isolate the percentage contribution of Rainfall Intensity, Low Elevation, Slope Angle, and Water Proximity.
+
+4. **`AlertAgent` (Real-Time Push Dispatcher)**:
+   - Connects to frontend clients via WebSockets (`/ws/alerts/{client_id}`).
+   - Automatically broadcasts instant warnings when predicted flood risk exceeds actionable thresholds (`MEDIUM` or `HIGH`).
+
+5. **`ResourceAgent` (Emergency Logistics & Disaster Mitigation)**:
+   - **Asset Allocation**: Mobilizes NDRF rescue units, Fire Brigade squads, mobile hospitals, 50,000 L/hr drainage pumps, and designated school/community shelters.
+   - **Contextual Safety Guidelines**: Formulates risk-tailored Do's and Don'ts categorized by priority level (*Critical*, *High*, *Medium*).
+   - **Evacuation Corridors**: Evaluates elevation contours to provide multi-directional evacuation paths (Direction, Distance, Route Open/Standby status).
+   - **Emergency Helplines**: Integrates rapid-dial directories (NDRF, Police, Ambulance, Fire, National Disaster Helpline 1078).
 
 ---
 
-## Quick Start
+## 🗺️ Interactive GIS & Dashboard Features
 
-### 1) Clone the repository
+- **Multi-Basemap GIS Viewer**: Supports high-resolution **Satellite Imagery (Esri World Imagery)**, **Topographic Mapping (OpenStreetMap)**, and **Terrain Elevation Contours (OpenTopoMap)** without third-party API key watermarks.
+- **Pan-India Hotspot Benchmarks**: Interactive markers for high-exposure zones (Mumbai, Chennai, Kolkata, Guwahati, Kochi, Delhi, Jodhpur, etc.) with pre-calibrated baseline topography.
+- **Point-and-Click Geolocation**: Click anywhere on the map to automatically extract coordinates and populate the prediction engine.
+- **Historical Trend Visualizer**: Built-in Chart.js analytics tracking probability distribution over consecutive runs.
+- **Adaptive Dark / Light Themes**: High-contrast, accessibility-focused UI with native OS color-scheme styling.
 
+---
+
+## 📁 Repository Structure
+
+```text
+AI-Flood-Resilience-Network/
+├── agents/
+│   ├── alert_agent.py          # WebSocket broadcasting & notification dispatcher
+│   ├── base_agent.py           # Base agent class with telemetry & status tracking
+│   ├── coordination_agent.py   # Multi-agent orchestrator & pipeline workflow
+│   ├── monitoring_agent.py     # Atmospheric simulation & weather telemetry
+│   ├── prediction_agent.py     # PyTorch MLP inference & feature pipeline
+│   └── resource_agent.py       # Emergency response planning, logistics & safety
+├── data/
+│   ├── raw/
+│   │   └── global-flood-events-fao-eve.csv  # Historical FAO flood event aggregates
+│   └── processed/
+│       └── flood_training_data.csv          # Feature-engineered training dataset
+├── models/
+│   ├── flood_model_best.pth    # Serialized PyTorch neural network checkpoint
+│   ├── prepare_data.py         # ETL, cleaning & feature engineering script
+│   └── train_model.py          # Neural network training loop & validation
+├── static/
+│   └── index.html              # Interactive GIS dashboard & viewer (HTML/CSS/JS)
+├── main.py                     # FastAPI application & entry point
+├── requirements.txt            # Python dependencies
+├── .gitignore                  # Git ignore definitions
+└── README.md                   # Project documentation
+```
+
+---
+
+## 🚀 Quick Start Guide
+
+### 1. Prerequisites
+- Python 3.10, 3.11, 3.12, 3.13, or 3.14
+- Git
+
+### 2. Clone the Repository
 ```bash
 git clone https://github.com/riya-1408/AI-Flood-Resilience-Network.git
 cd AI-Flood-Resilience-Network
 ```
 
-### 2) Create a virtual environment
+### 3. Set Up Virtual Environment
 
-**macOS/Linux**
+**Windows (PowerShell):**
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+```
+
+**macOS / Linux:**
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
 ```
 
-**Windows (PowerShell)**
-```powershell
-py -m venv .venv
-.\.venv\Scripts\Activate.ps1
-```
-
-### 3) Install dependencies
-
-If you have a `requirements.txt`:
-
+### 4. Install Dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-If you don’t yet, create one as you finalize your Python tooling (see [Development Guide](#development-guide)).
-
-### 4) Run the project
-
-Because the repository may be either:
-
-- **Static HTML** (open `index.html`), or
-- **Python-powered web app** (serve the viewer with a backend)
-
-Try one of these options:
-
-#### Option A — Static viewer
-
-If there is an `index.html` file:
-
-- Open it directly in a browser, **or**
-- Serve it locally (recommended):
-
+### 5. Launch the Application
 ```bash
-# from the folder that contains index.html
-python -m http.server 8000
+python main.py
 ```
-
-Then open:
-
-- `http://localhost:8000`
-
-#### Option B — Python backend (Flask/FastAPI)
-
-If the repo contains an `app.py` or similar:
-
-```bash
-python app.py
+Open your browser and navigate to:
 ```
-
-or, if it’s FastAPI:
-
-```bash
-uvicorn app:app --reload
-```
-
-Then open the printed local URL.
-
----
-
-## How to Use
-
-### Viewer (HTML)
-
-The interactive viewer should help a non-technical user:
-
-- Understand the purpose of the dashboard/map
-- Select a location/region
-- View risk/resilience indicators
-- Explore networks and relationships (where relevant)
-- Export or capture insights
-
-**Typical interactions (examples):**
-
-- Filters (region, scenario, date range)
-- Toggles (layers: flood extent, shelters, hospitals, roads)
-- Hover/click tooltips for details
-- Search bar for place names
-
-### Python Analysis
-
-Python scripts typically handle:
-
-- Cleaning raw data
-- Joining datasets
-- Calculating metrics (risk scores, accessibility, network centrality)
-- Generating outputs for the web viewer (CSV/JSON)
-
----
-
-## Configuration
-
-If you have environment variables, consider documenting them here.
-
-Recommended pattern:
-
-- Create a `.env.example` file that lists variables (no secrets)
-- Use a `.env` file locally (never commit secrets)
-
-Example:
-
-```bash
-# .env.example
-DATA_DIR=./data
-OUTPUT_DIR=./data/processed
-PORT=8000
+http://localhost:8000
 ```
 
 ---
 
-## Data
+## 📡 API Reference
 
-> Add data sources and attribution here.
-
-Suggested documentation:
-
-- **Data origin:** agency/source, URL, license/terms
-- **Spatial reference:** CRS/projection (if GIS)
-- **Update frequency:** daily/weekly/annual
-- **Preprocessing:** what cleaning steps were applied
-- **Limitations:** missing values, sampling bias, uncertainty
-
-**Folder convention:**
-
-- `data/raw/` – original data (do not edit)
-- `data/processed/` – cleaned outputs used by the viewer
+| Endpoint | Method | Description |
+| :--- | :---: | :--- |
+| `/` | `GET` | Serves the interactive GIS dashboard |
+| `/predict` | `POST` | Triggers the complete 5-agent coordination & inference workflow |
+| `/api/flood-zones` | `GET` | Retrieves known India flood hotspot benchmarks with baseline metrics |
+| `/api/weather/{lat}/{lon}` | `GET` | Generates simulated weather telemetry for coordinate pairs |
+| `/api/safety-tips/{risk_level}`| `GET` | Returns risk-tailored Do's, Don'ts, emergency helplines & evacuation routes |
+| `/api/history` | `GET` | Retrieves historical prediction log for trend analytics |
+| `/api/stats` | `GET` | Returns platform summary metrics (total runs, risk distributions, uptime) |
+| `/agent-status` | `GET` | Health check reporting the live status of all 5 agents |
+| `/ws/alerts/{client_id}` | `WebSocket` | Real-time bi-directional channel for instantaneous alert broadcasts |
 
 ---
 
-## Development Guide
+## 🧪 Model Details & Training
 
-### Recommended tooling
+The core inference engine uses a PyTorch Multi-Layer Perceptron (`FloodMLP`) featuring:
+- Batch Normalization & Dropout (0.3) for regularization
+- ReLU non-linearities and Sigmoid activation
+- 20 input hydrological, topographic, and temporal indicators
+- Trained against historical FAO flood event aggregates
 
-- Python 3.10+
-- `pip` or `uv`
-- Formatting: `black`
-- Linting: `ruff` (or `flake8`)
-
-Example setup:
-
+To re-train or fine-tune the model:
 ```bash
-pip install black ruff pytest
+# Prepare dataset
+python models/prepare_data.py
+
+# Train neural network
+python models/train_model.py
 ```
 
-### Code style
-
-- Keep functions small and testable
-- Separate **data processing** from **visualization**
-- Prefer producing stable intermediate files (CSV/JSON) for the viewer
-
 ---
 
-## Testing
+## 🤝 Contributing
 
-If tests exist:
-
-```bash
-pytest
-```
-
-If tests do not exist yet, consider adding:
-
-- Unit tests for data transforms
-- Validation checks for schema/columns
-- Small sample datasets for repeatable runs
-
----
-
-## Troubleshooting
-
-### Common issues
-
-- **`ModuleNotFoundError`**: ensure `.venv` is activated and dependencies installed.
-- **CORS / browser blocking local files**: serve HTML with `python -m http.server` instead of opening `file://...`.
-- **Large files**: consider Git LFS or hosting large datasets separately.
-
----
-
-## Roadmap
-
-Ideas to extend the project:
-
-- Add a clear dataset pipeline (raw → processed → published)
-- Add interactive charts and filters
-- Add map layers (if GIS): flood extent, elevation, shelters, critical infrastructure
-- Add scenario comparisons (baseline vs mitigation)
-- Export reports (PDF/CSV)
-- Improve accessibility (keyboard navigation, contrast, ARIA labels)
-
----
-
-## Contributing
-
-Contributions are welcome.
-
-1. Fork the repo
-2. Create a feature branch: `git checkout -b feature/my-change`
-3. Commit: `git commit -m "Add ..."`
-4. Push: `git push origin feature/my-change`
+Contributions, issues, and feature requests are welcome!
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-Please include:
-
-- What changed
-- Why it changed
-- How to test it
-
 ---
 
+## 📜 License
 
-
----
-
-## Acknowledgements
-
-- Data providers and open-source libraries used in this project
-- Contributors and collaborators
+Distributed under the MIT License. See `LICENSE` for more information.

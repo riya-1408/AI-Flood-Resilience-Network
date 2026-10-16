@@ -4,6 +4,7 @@ import torch.nn as nn
 import numpy as np
 from typing import Dict, Any
 import os
+import datetime
 
 class FloodMLP(nn.Module):
     """Improved Multi-Layer Perceptron for flood prediction"""
@@ -85,8 +86,63 @@ class PredictionAgent(BaseAgent):
             # Convert binary river proximity to distance
             distance_to_water_m = 100 if river_proximity_binary == 1 else 2000
             
-            # Generate realistic estimates for missing features
+            # Temporal
+            now = datetime.datetime.now()
+            month = now.month
+            season = 3 if month in [6, 7, 8, 9] else 1 if month in [12, 1, 2] else 2 if month in [3, 4, 5] else 4
+            period_in_year = (month - 1) * 2 + (1 if now.day <= 15 else 2)
+
+            # Hydrological & flood risk estimation based on inputs
+            rainfall_intensity = min(1.0, max(0.0, rainfall_mm / 500.0))
+            elevation_factor = max(0.05, (500.0 - min(480.0, elevation_m)) / 500.0)
+            river_factor = 1.6 if river_proximity_binary == 1 else 0.6
+            slope_factor = max(0.2, (45.0 - min(40.0, slope_deg)) / 45.0)
+
+            composite_risk = (rainfall_intensity * 0.45 + elevation_factor * 0.25 + slope_factor * 0.15) * river_factor
+
+            region_flood_freq = min(0.48, max(0.18, 0.22 + composite_risk * 0.25))
+            region_avg_flood_area = max(0.5, composite_risk * 45.0)
+            region_max_flood_area = max(1.0, region_avg_flood_area * 5.0)
+            region_avg_pct_flooded = min(15.0, max(0.1, composite_risk * 5.0))
+            region_std_pct_flooded = max(0.05, region_avg_pct_flooded * 0.5)
+            region_avg_pop_exposed = min(24000.0, max(50.0, 500.0 + region_avg_flood_area * 180.0))
+            prev1_area_flooded = max(0.0, region_avg_flood_area * (0.8 if rainfall_mm > 100 else 0.1))
+            prev1_pct_flooded = max(0.0, region_avg_pct_flooded * (0.8 if rainfall_mm > 100 else 0.1))
+            prev2_area_flooded = prev1_area_flooded * 0.7
+            prev2_pct_flooded = prev1_pct_flooded * 0.7
+            cumulative_3p_area = region_avg_flood_area + prev1_area_flooded + prev2_area_flooded
+            flood_area_trend = (rainfall_mm - 120.0) / 40.0
+            country_flood_freq = 0.30
+            country_avg_area = 17.64
+            country_seasonal_avg = 17.70 * (1.4 if season == 3 else 0.8)
+            pop_density_proxy = min(4600.0, max(100.0, 3000.0 if elevation_m < 30 else 800.0))
+            cropland_ratio = 0.08
+
+            # Comprehensive features_dict supporting all model feature schemas
             features_dict = {
+                # Schema 1: Satellite / Event dataset features
+                'month': month,
+                'season': season,
+                'period_in_year': period_in_year,
+                'region_flood_freq': region_flood_freq,
+                'region_avg_flood_area': region_avg_flood_area,
+                'region_max_flood_area': region_max_flood_area,
+                'region_avg_pct_flooded': region_avg_pct_flooded,
+                'region_std_pct_flooded': region_std_pct_flooded,
+                'region_avg_pop_exposed': region_avg_pop_exposed,
+                'prev1_area_flooded': prev1_area_flooded,
+                'prev1_pct_flooded': prev1_pct_flooded,
+                'prev2_area_flooded': prev2_area_flooded,
+                'prev2_pct_flooded': prev2_pct_flooded,
+                'cumulative_3p_area': cumulative_3p_area,
+                'flood_area_trend': flood_area_trend,
+                'country_flood_freq': country_flood_freq,
+                'country_avg_area': country_avg_area,
+                'country_seasonal_avg': country_seasonal_avg,
+                'pop_density_proxy': pop_density_proxy,
+                'cropland_ratio': cropland_ratio,
+
+                # Schema 2: Topographic / physical features
                 'elevation_m': elevation_m,
                 'slope_deg': slope_deg,
                 'aspect_deg': 180,
@@ -104,14 +160,12 @@ class PredictionAgent(BaseAgent):
                 'urban_density_pct': 40,
                 'vegetation_cover_pct': 50,
                 'impervious_surface_pct': 30,
-                'drainage_capacity': 0.6,
-                'season': 2,
-                'month': 6
+                'drainage_capacity': 0.6
             }
             
             # Create feature array in correct order
-            if len(self.feature_columns) == 20:
-                features = np.array([[features_dict[col] for col in self.feature_columns]])
+            if len(self.feature_columns) > 0:
+                features = np.array([[features_dict.get(col, 0.0) for col in self.feature_columns]])
             else:
                 features = np.array([[elevation_m, rainfall_mm, river_proximity_binary, slope_deg]])
             

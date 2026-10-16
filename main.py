@@ -39,13 +39,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+STATIC_DIR = os.path.join(BASE_DIR, "static")
+MODEL_PATH = os.path.join(BASE_DIR, "models", "flood_model_best.pth")
+
 # Initialize agents
 print("\n" + "="*80)
 print("🚀 INITIALIZING FLOOD RESILIENCE NETWORK v2.0")
 print("="*80 + "\n")
 
 monitoring_agent = MonitoringAgent("monitor-001")
-prediction_agent = PredictionAgent("predictor-001", model_path="models/flood_model_best.pth")
+prediction_agent = PredictionAgent("predictor-001", model_path=MODEL_PATH)
 alert_agent = AlertAgent("alert-001")
 resource_agent = ResourceAgent("resource-001")
 
@@ -72,32 +76,45 @@ platform_stats = {
     "start_time": datetime.now().isoformat(),
 }
 
-# Known flood-prone zones in India
+# Known flood-prone zones in India with topographic benchmarks
 FLOOD_ZONES = [
-    {"name": "Mumbai", "lat": 19.076, "lon": 72.877, "risk": "HIGH", "reason": "Coastal low-lying city, heavy monsoon rainfall", "population": "20.7M"},
-    {"name": "Chennai", "lat": 13.083, "lon": 80.270, "risk": "HIGH", "reason": "Cyclone-prone coast, poor drainage", "population": "10.9M"},
-    {"name": "Kolkata", "lat": 22.572, "lon": 88.363, "risk": "HIGH", "reason": "Ganges delta, below sea level areas", "population": "14.8M"},
-    {"name": "Patna", "lat": 25.612, "lon": 85.144, "risk": "HIGH", "reason": "On the banks of river Ganges", "population": "2.5M"},
-    {"name": "Guwahati", "lat": 26.144, "lon": 91.736, "risk": "HIGH", "reason": "Brahmaputra river floods annually", "population": "1.1M"},
-    {"name": "Kochi", "lat": 9.931, "lon": 76.267, "risk": "HIGH", "reason": "Kerala backwaters, extreme rainfall", "population": "2.1M"},
-    {"name": "Varanasi", "lat": 25.321, "lon": 83.010, "risk": "MEDIUM", "reason": "Ganges river proximity", "population": "1.4M"},
-    {"name": "Hyderabad", "lat": 17.385, "lon": 78.486, "risk": "MEDIUM", "reason": "Urban flooding, Musi river", "population": "10.0M"},
-    {"name": "Ahmedabad", "lat": 23.022, "lon": 72.571, "risk": "MEDIUM", "reason": "Sabarmati river, monsoon flooding", "population": "8.0M"},
-    {"name": "Srinagar", "lat": 34.083, "lon": 74.797, "risk": "MEDIUM", "reason": "Jhelum river, glacier melt floods", "population": "1.7M"},
-    {"name": "Delhi", "lat": 28.613, "lon": 77.209, "risk": "MEDIUM", "reason": "Yamuna river floods during monsoon", "population": "32.0M"},
-    {"name": "Bengaluru", "lat": 12.971, "lon": 77.594, "risk": "LOW", "reason": "Elevated plateau, moderate rainfall", "population": "12.3M"},
-    {"name": "Jaipur", "lat": 26.912, "lon": 75.787, "risk": "LOW", "reason": "Semi-arid climate, occasional flash floods", "population": "4.0M"},
-    {"name": "Pune", "lat": 18.520, "lon": 73.856, "risk": "LOW", "reason": "Elevated terrain, dam-controlled rivers", "population": "7.4M"},
+    {"name": "Mumbai", "lat": 19.0760, "lon": 72.8777, "risk": "HIGH", "reason": "Coastal low-lying city, heavy monsoon rainfall", "population": "20.7M", "elevation_m": 14, "slope_deg": 0.5, "river_proximity": 1, "rainfall_mm": 180},
+    {"name": "Chennai", "lat": 13.0827, "lon": 80.2707, "risk": "HIGH", "reason": "Cyclone-prone coast, poor drainage", "population": "10.9M", "elevation_m": 7, "slope_deg": 0.5, "river_proximity": 1, "rainfall_mm": 130},
+    {"name": "Kolkata", "lat": 22.5726, "lon": 88.3639, "risk": "HIGH", "reason": "Ganges delta, below sea level areas", "population": "14.8M", "elevation_m": 9, "slope_deg": 0.4, "river_proximity": 1, "rainfall_mm": 140},
+    {"name": "Patna", "lat": 25.6127, "lon": 85.1444, "risk": "HIGH", "reason": "On the banks of river Ganges", "population": "2.5M", "elevation_m": 53, "slope_deg": 0.8, "river_proximity": 1, "rainfall_mm": 110},
+    {"name": "Guwahati", "lat": 26.1445, "lon": 91.7362, "risk": "HIGH", "reason": "Brahmaputra river floods annually", "population": "1.1M", "elevation_m": 55, "slope_deg": 1.5, "river_proximity": 1, "rainfall_mm": 160},
+    {"name": "Kochi", "lat": 9.9312, "lon": 76.2673, "risk": "HIGH", "reason": "Kerala backwaters, extreme rainfall", "population": "2.1M", "elevation_m": 4, "slope_deg": 0.3, "river_proximity": 1, "rainfall_mm": 170},
+    {"name": "Varanasi", "lat": 25.3216, "lon": 83.0104, "risk": "MEDIUM", "reason": "Ganges river proximity", "population": "1.4M", "elevation_m": 80, "slope_deg": 1.0, "river_proximity": 1, "rainfall_mm": 80},
+    {"name": "Hyderabad", "lat": 17.3850, "lon": 78.4867, "risk": "MEDIUM", "reason": "Urban flooding, Musi river", "population": "10.0M", "elevation_m": 542, "slope_deg": 2.5, "river_proximity": 1, "rainfall_mm": 70},
+    {"name": "Ahmedabad", "lat": 23.0225, "lon": 72.5714, "risk": "MEDIUM", "reason": "Sabarmati river, monsoon flooding", "population": "8.0M", "elevation_m": 53, "slope_deg": 1.0, "river_proximity": 1, "rainfall_mm": 75},
+    {"name": "Srinagar", "lat": 34.0837, "lon": 74.7973, "risk": "MEDIUM", "reason": "Jhelum river, glacier melt floods", "population": "1.7M", "elevation_m": 1585, "slope_deg": 3.5, "river_proximity": 1, "rainfall_mm": 60},
+    {"name": "Delhi", "lat": 28.6139, "lon": 77.2090, "risk": "MEDIUM", "reason": "Yamuna river floods during monsoon", "population": "32.0M", "elevation_m": 216, "slope_deg": 1.0, "river_proximity": 1, "rainfall_mm": 65},
+    {"name": "Bengaluru", "lat": 12.9716, "lon": 77.5946, "risk": "LOW", "reason": "Elevated plateau, moderate rainfall", "population": "12.3M", "elevation_m": 920, "slope_deg": 3.0, "river_proximity": 0, "rainfall_mm": 20},
+    {"name": "Jaipur (Rajasthan)", "lat": 26.9124, "lon": 75.7873, "risk": "LOW", "reason": "Semi-arid plateau, elevated terrain", "population": "4.0M", "elevation_m": 431, "slope_deg": 2.0, "river_proximity": 0, "rainfall_mm": 25},
+    {"name": "Jodhpur (Rajasthan)", "lat": 26.2389, "lon": 73.0243, "risk": "LOW", "reason": "Thar desert region, low baseline flood risk", "population": "1.5M", "elevation_m": 231, "slope_deg": 1.5, "river_proximity": 0, "rainfall_mm": 15},
+    {"name": "Pune", "lat": 18.5204, "lon": 73.8567, "risk": "LOW", "reason": "Elevated terrain, dam-controlled rivers", "population": "7.4M", "elevation_m": 560, "slope_deg": 3.0, "river_proximity": 1, "rainfall_mm": 35},
 ]
 
 # Mount static files
-if os.path.exists("static"):
-    app.mount("/static", StaticFiles(directory="static"), name="static")
+if os.path.exists(STATIC_DIR):
+    app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 # ── Core Endpoints ──
 
 @app.get("/")
 async def root():
+    """Serve interactive dashboard directly at root URL"""
+    return FileResponse(os.path.join(STATIC_DIR, "index.html"))
+
+@app.get("/demo")
+async def demo_page():
+    """Serve interactive dashboard (alias)"""
+    return FileResponse(os.path.join(STATIC_DIR, "index.html"))
+
+@app.get("/api")
+@app.get("/status")
+async def system_status():
+    """API health and system status"""
     return {
         "project": "Flood Resilience Network",
         "version": "2.0.0",
@@ -105,11 +122,6 @@ async def root():
         "agents": list(agents.keys()),
         "total_predictions": platform_stats["total_predictions"],
     }
-
-@app.get("/demo")
-async def demo_page():
-    """Serve interactive dashboard"""
-    return FileResponse("static/index.html")
 
 @app.post("/predict")
 async def predict_flood(location: Dict[str, Any]):
@@ -215,4 +227,5 @@ async def websocket_alerts(websocket: WebSocket, client_id: str):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    print("\n🌐 Dashboard available at: http://localhost:8000")
+    uvicorn.run(app, host="127.0.0.1", port=8000)
